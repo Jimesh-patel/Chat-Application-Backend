@@ -2,13 +2,15 @@ using Identity.Domain;
 using Identity.ReadModels;
 using Marten;
 using Platform.Common.Results;
+using Platform.Contracts;
 using Platform.Contracts.Commands;
 
 namespace Identity.Features.RegisterUser;
 
 internal sealed class RegisterUserHandler(
     IDocumentSession session,
-    IQuerySession querySession)
+    IQuerySession querySession,
+    IPasswordHasher passwordHasher)
     : ICommandHandler<RegisterUserCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(
@@ -36,8 +38,18 @@ internal sealed class RegisterUserHandler(
                 usernameResult.Error!);
         }
 
+        var passwordResult = PasswordHash.Create(command.Password, passwordHasher);
+
+        if (passwordResult.IsFailure)
+        {
+            Serilog.Log.Warning("Failed to create password hash: {Error}", passwordResult.Error);
+            return Result<Guid>.Failure(
+                passwordResult.Error!);
+        }
+
         var email = emailResult.Value!;
         var username = usernameResult.Value!;
+        var passwordHash = passwordResult.Value!;
 
         try
         {
@@ -62,7 +74,7 @@ internal sealed class RegisterUserHandler(
                 userId,
                 email,
                 username,
-                new PasswordHash(command.Password));
+                passwordHash);
 
             session.Events.StartStream(
                 userId.Value,

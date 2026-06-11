@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\Platform\Platform.Contracts\Platform.Contracts.csproj" />
     <ProjectReference Include="..\..\Platform\Platform.Persistence\Platform.Persistence.csproj" />
     <ProjectReference Include="..\..\Platform\Platform.Http\Platform.Http.csproj" />
+    <ProjectReference Include="..\..\Platform\Platform.Auth\Platform.Auth.csproj" />
   </ItemGroup>
 
 </Project>

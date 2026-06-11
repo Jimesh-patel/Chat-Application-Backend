@@ -13,8 +13,6 @@ public sealed class User : AggregateRoot<UserId>
 
     public PasswordHash PasswordHash { get; private set; } = null!;
 
-    public string DisplayName { get; private set; } = string.Empty;
-
     public DateTime CreatedAtUtc { get; private set; }
 
     public static User Register(
@@ -29,7 +27,6 @@ public sealed class User : AggregateRoot<UserId>
             Email = email,
             Username = username,
             PasswordHash = passwordHash,
-            DisplayName = username.Value,
             CreatedAtUtc = DateTime.UtcNow
         };
 
@@ -38,7 +35,9 @@ public sealed class User : AggregateRoot<UserId>
                 id,
                 email.Value,
                 username.Value,
-                username.Value));
+                username.Value,
+                passwordHash.Value,
+                user.CreatedAtUtc));
 
         return user;
     }

@@ -4,6 +4,7 @@ using Platform.Contracts.Modules;
 using Platform.Persistence.DependencyInjection;
 using Platform.Http;
 using Serilog;
+using Platform.Auth.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddAuth();
 
 builder.Services.AddModules(
     builder.Configuration,

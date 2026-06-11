@@ -6,5 +6,7 @@ public sealed record UserRegistered(
     UserId UserId,
     string Email,
     string Username,
-    string DisplayName)
+    string DisplayName,
+    string PasswordHash,
+    DateTime CreatedAtUtc)
     : DomainEvent;
