@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Marten" Version="9.7.2" />
+    <PackageReference Include="Weasel.Postgresql" Version="9.1.5" />
+  </ItemGroup>
+
 </Project>
