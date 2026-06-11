@@ -1,8 +1,6 @@
 ﻿using Identity.Features.RegisterUser;
 using Identity.Infractusture;
 using Identity.Projections;
-using JasperFx.Events.Projections;
-using Marten;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,13 +16,7 @@ public sealed class IdentityModule : IModule
     {
         services.AddRegisterUser();
         services.AddIdentityInfractrusture();
-
-        services.ConfigureMarten(options =>
-        {
-            options.Projections.Add<UserProjection>(
-                ProjectionLifecycle.Inline);
-        });
-
+        services.AddUserProjection();
         return services;
     }
 
