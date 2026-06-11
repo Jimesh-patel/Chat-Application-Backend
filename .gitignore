@@ -39,7 +39,7 @@ packages/
 
 # Logs
 
-logs/
+[Ll]ogs/
 *.log
 
 # Local Configuration
