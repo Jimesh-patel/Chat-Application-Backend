@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Groups\Groups.Contracts\Groups.Contracts.csproj" />
+    <ProjectReference Include="..\..\Modules\Identity\Identity\Identity.csproj" />
+    <ProjectReference Include="..\..\Platform\Platform.Contracts\Platform.Contracts.csproj" />
     <ProjectReference Include="..\..\Platform\Platform.Persistence\Platform.Persistence.csproj" />
   </ItemGroup>
 

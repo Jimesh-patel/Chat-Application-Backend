@@ -6,9 +6,19 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+    <ItemGroup>
+	    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Marten" Version="9.7.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\Platform\Platform.Common\Platform.Common.csproj" />
     <ProjectReference Include="..\..\..\Platform\Platform.Contracts\Platform.Contracts.csproj" />
+    <ProjectReference Include="..\Identity.Contracts\Identity.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

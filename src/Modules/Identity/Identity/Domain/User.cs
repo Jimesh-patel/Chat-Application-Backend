@@ -1,4 +1,4 @@
-﻿using Identity.Events;
+﻿using Identity.Domain.Events;
 using Platform.Common.Entities;
 
 namespace Identity.Domain;
@@ -34,9 +34,11 @@ public sealed class User : AggregateRoot<UserId>
         };
 
         user.Raise(
-            new UserRegistered(
+    new UserRegistered(
                 id,
-                email.Value));
+                email.Value,
+                username.Value,
+                username.Value));
 
         return user;
     }
