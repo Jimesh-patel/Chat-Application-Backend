@@ -1,4 +1,4 @@
-﻿using Identity.Domain;
+using Identity.Domain;
 using Identity.ReadModels;
 using Marten;
 using Platform.Common.Results;
@@ -15,10 +15,13 @@ internal sealed class RegisterUserHandler(
         RegisterUserCommand command,
         CancellationToken cancellationToken)
     {
+        Serilog.Log.Information("Handling RegisterUserCommand for {Email}", command.Email);
+
         var emailResult = Email.Create(command.Email);
 
         if (emailResult.IsFailure)
         {
+            Serilog.Log.Warning("Failed to create email: {Error}", emailResult.Error);
             return Result<Guid>.Failure(
                 emailResult.Error!);
         }
@@ -28,6 +31,7 @@ internal sealed class RegisterUserHandler(
 
         if (usernameResult.IsFailure)
         {
+            Serilog.Log.Warning("Failed to create username: {Error}", usernameResult.Error);
             return Result<Guid>.Failure(
                 usernameResult.Error!);
         }
@@ -35,36 +39,48 @@ internal sealed class RegisterUserHandler(
         var email = emailResult.Value!;
         var username = usernameResult.Value!;
 
-        var emailExists = await querySession
-            .Query<UserReadModel>()
-            .AnyAsync(
-                x => x.Email == email.Value,
+        try
+        {
+            var emailExists = await querySession
+                .Query<UserReadModel>()
+                .AnyAsync(
+                    x => x.Email == email.Value,
+                    cancellationToken);
+
+            if (emailExists)
+            {
+                Serilog.Log.Warning("Registration failed: Email {Email} already exists", email.Value);
+                return Result<Guid>.Failure(
+                    new Error(
+                        "Identity.EmailAlreadyExists",
+                        "Email already exists."));
+            }
+
+            var userId = new UserId(Guid.NewGuid());
+
+            var user = User.Register(
+                userId,
+                email,
+                username,
+                new PasswordHash(command.Password));
+
+            session.Events.StartStream(
+                userId.Value,
+                user.DomainEvents);
+
+            await session.SaveChangesAsync(
                 cancellationToken);
 
-        if (emailExists)
-        {
-            return Result<Guid>.Failure(
-                new Error(
-                    "Identity.EmailAlreadyExists",
-                    "Email already exists."));
+            Serilog.Log.Information("Successfully registered user {UserId} with email {Email}", userId.Value, email.Value);
+
+            return Result<Guid>.Success(
+                userId.Value);
         }
-
-        var userId = new UserId(Guid.NewGuid());
-
-        var user = User.Register(
-            userId,
-            email,
-            username,
-            new PasswordHash(command.Password));
-
-        session.Events.StartStream(
-            userId.Value,
-            user.DomainEvents);
-
-        await session.SaveChangesAsync(
-            cancellationToken);
-
-        return Result<Guid>.Success(
-            userId.Value);
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Error occurred during user registration for {Email}", command.Email);
+            return Result<Guid>.Failure(
+                new Error("Identity.RegistrationFailed", "An unexpected error occurred during registration."));
+        }
     }
 }
