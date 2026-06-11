@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Platform\Platform.Common\Platform.Common.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Platform.Contracts\Platform.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>
