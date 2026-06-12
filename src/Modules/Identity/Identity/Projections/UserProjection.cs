@@ -6,7 +6,7 @@ using Marten.Events.Aggregation;
 namespace Identity.Projections;
 
 public sealed partial class UserProjection
-    : SingleStreamProjection<UserReadModel, Guid>
+    : SingleStreamProjection<UserReadModel, UserId>
 {
     public static UserReadModel Create(
         UserRegistered @event)

@@ -1,4 +1,5 @@
-﻿using JasperFx.Events.Projections;
+using Identity.Domain;
+using JasperFx.Events.Projections;
 using Marten;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,9 @@ internal static class ProjectionDependencyInjectionExtensions
     {
         services.ConfigureMarten(options =>
         {
+            options.Projections.Snapshot<User>(
+                SnapshotLifecycle.Inline);
+
             options.Projections.Add<UserProjection>(
                 ProjectionLifecycle.Inline);
         });

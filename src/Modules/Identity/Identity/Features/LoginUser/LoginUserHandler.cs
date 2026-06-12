@@ -6,6 +6,7 @@ using Platform.Auth;
 using Platform.Common.Results;
 using Platform.Contracts;
 using Platform.Contracts.Commands;
+using Serilog;
 
 namespace Identity.Features.LoginUser;
 
@@ -21,7 +22,7 @@ internal sealed class LoginUserHandler(
         LoginUserCommand command,
         CancellationToken cancellationToken)
     {
-        Serilog.Log.Information("Handling LoginUserCommand for {Email}", command.Email);
+        Log.Information("Handling LoginUserCommand for {Email}", command.Email);
 
         var userReadModel = await querySession
             .Query<UserReadModel>()
@@ -42,14 +43,14 @@ internal sealed class LoginUserHandler(
         var refreshTokenHash = passwordHasher.Hash(refreshToken);
         var refreshTokenExpiry = DateTime.UtcNow.AddDays(jwtOptions.Value.RefreshTokenExpirationInDays);
 
-        var userAggregate = await session.Events.AggregateStreamAsync<User>(userReadModel.Id, token: cancellationToken);
+        var userAggregate = await session.Events.AggregateStreamAsync<User>(userReadModel.Id.Value, token: cancellationToken);
         if (userAggregate is null)
         {
             return Result<LoginUserResult>.Failure(new Error("Identity.UserNotFound", "User aggregate not found."));
         }
 
         userAggregate.Login(refreshTokenHash, refreshTokenExpiry);
-        session.Events.Append(userAggregate.Id.Value, userAggregate.DomainEvents.ToArray());
+        session.Events.Append(userReadModel.Id.Value, userAggregate.DomainEvents.ToArray());
         await session.SaveChangesAsync(cancellationToken);
 
         return Result<LoginUserResult>.Success(new LoginUserResult(accessToken, refreshToken));

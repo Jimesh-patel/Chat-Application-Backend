@@ -1,8 +1,10 @@
-﻿namespace Identity.ReadModels;
+﻿using Identity.Domain;
+
+namespace Identity.ReadModels;
 
 public sealed class UserReadModel
 {
-    public Guid Id { get; set; }
+    public UserId Id { get; set; }
 
     public string Email { get; set; } = string.Empty;
 
