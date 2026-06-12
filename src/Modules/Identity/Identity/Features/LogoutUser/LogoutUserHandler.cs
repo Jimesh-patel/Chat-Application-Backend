@@ -25,7 +25,7 @@ internal sealed class LogoutUserHandler(
 
         userAggregate.Logout(refreshTokenHash);
 
-        session.Events.Append(userAggregate.Id.Value, userAggregate.DomainEvents.ToArray());
+        session.Events.Append(command.UserId, [.. userAggregate.DomainEvents]);
         await session.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

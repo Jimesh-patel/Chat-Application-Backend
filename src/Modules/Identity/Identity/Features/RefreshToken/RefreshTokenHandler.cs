@@ -48,7 +48,7 @@ internal sealed class RefreshTokenHandler(
 
         userAggregate.Login(newRefreshTokenHash, newRefreshTokenExpiry);
 
-        session.Events.Append(userAggregate.Id.Value, userAggregate.DomainEvents.ToArray());
+        session.Events.Append(userId, [.. userAggregate.DomainEvents]);
         await session.SaveChangesAsync(cancellationToken);
 
         return Result<LoginUserResult>.Success(new LoginUserResult(newAccessToken, newRefreshToken));

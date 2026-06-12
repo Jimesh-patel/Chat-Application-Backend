@@ -5,7 +5,7 @@ namespace Identity.Domain;
 
 public sealed class User : AggregateRoot<UserId>
 {
-    private User() {}
+    public User() {}
 
     public Email Email { get; private set; } = null!;
 
@@ -15,9 +15,9 @@ public sealed class User : AggregateRoot<UserId>
 
     public DateTime CreatedAtUtc { get; private set; }
 
-    private List<RefreshToken> _refreshTokens = [];
+    private List<RefreshToken>? _refreshTokens;
 
-    public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
+    public IReadOnlyCollection<RefreshToken> RefreshTokens => (_refreshTokens ??= []).AsReadOnly();
 
     public static User Register(
         UserId id,
@@ -76,12 +76,15 @@ public sealed class User : AggregateRoot<UserId>
 
     public void Apply(UserLoggedIn e)
     {
+        Id = e.UserId;
         _refreshTokens ??= [];
         _refreshTokens.Add(new RefreshToken(e.RefreshTokenHash, e.RefreshTokenExpiryUtc));
     }
 
-    private void Apply(UserLoggedOut e)
+    public void Apply(UserLoggedOut e)
     {
+        Id = e.UserId;
+        _refreshTokens ??= [];
         _refreshTokens.RemoveAll(rt => rt.TokenHash == e.RefreshTokenHash);
     }
 }
