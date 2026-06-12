@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Platform.Contracts;
 
 namespace Platform.Auth.DependencyInjection;
 
