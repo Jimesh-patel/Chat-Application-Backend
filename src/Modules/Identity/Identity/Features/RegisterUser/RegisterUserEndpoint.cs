@@ -29,7 +29,9 @@ internal static class RegisterUserEndpoint
                 return Results.Ok(
                     new RegisterUserResponse(
                         result.Value!));
-            });
+            })
+            .WithTags("Identity")
+            .AllowAnonymous();
 
         return app;
     }

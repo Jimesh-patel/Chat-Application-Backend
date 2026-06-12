@@ -4,6 +4,7 @@ using Marten;
 using Platform.Auth;
 using Platform.Common.Results;
 using Platform.Contracts.Commands;
+using Serilog;
 
 namespace Identity.Features.RegisterUser;
 
@@ -17,13 +18,13 @@ internal sealed class RegisterUserHandler(
         RegisterUserCommand command,
         CancellationToken cancellationToken)
     {
-        Serilog.Log.Information("Handling RegisterUserCommand for {Email}", command.Email);
+        Log.Information("Handling RegisterUserCommand for {Email}", command.Email);
 
         var emailResult = Email.Create(command.Email);
 
         if (emailResult.IsFailure)
         {
-            Serilog.Log.Warning("Failed to create email: {Error}", emailResult.Error);
+            Log.Warning("Failed to create email: {Error}", emailResult.Error);
             return Result<Guid>.Failure(
                 emailResult.Error!);
         }
@@ -33,7 +34,7 @@ internal sealed class RegisterUserHandler(
 
         if (usernameResult.IsFailure)
         {
-            Serilog.Log.Warning("Failed to create username: {Error}", usernameResult.Error);
+            Log.Warning("Failed to create username: {Error}", usernameResult.Error);
             return Result<Guid>.Failure(
                 usernameResult.Error!);
         }
@@ -42,7 +43,7 @@ internal sealed class RegisterUserHandler(
 
         if (passwordResult.IsFailure)
         {
-            Serilog.Log.Warning("Failed to create password hash: {Error}", passwordResult.Error);
+            Log.Warning("Failed to create password hash: {Error}", passwordResult.Error);
             return Result<Guid>.Failure(
                 passwordResult.Error!);
         }
@@ -61,7 +62,7 @@ internal sealed class RegisterUserHandler(
 
             if (emailExists)
             {
-                Serilog.Log.Warning("Registration failed: Email {Email} already exists", email.Value);
+                Log.Warning("Registration failed: Email {Email} already exists", email.Value);
                 return Result<Guid>.Failure(
                     new Error(
                         "Identity.EmailAlreadyExists",
@@ -80,17 +81,15 @@ internal sealed class RegisterUserHandler(
                 userId.Value,
                 user.DomainEvents);
 
-            await session.SaveChangesAsync(
-                cancellationToken);
+            await session.SaveChangesAsync(cancellationToken);
 
-            Serilog.Log.Information("Successfully registered user {UserId} with email {Email}", userId.Value, email.Value);
+            Log.Information("Successfully registered user {UserId} with email {Email}", userId.Value, email.Value);
 
-            return Result<Guid>.Success(
-                userId.Value);
+            return Result<Guid>.Success(userId.Value);
         }
         catch (Exception ex)
         {
-            Serilog.Log.Error(ex, "Error occurred during user registration for {Email}", command.Email);
+            Log.Error(ex, "Error occurred during user registration for {Email}", command.Email);
             return Result<Guid>.Failure(
                 new Error("Identity.RegistrationFailed", "An unexpected error occurred during registration."));
         }

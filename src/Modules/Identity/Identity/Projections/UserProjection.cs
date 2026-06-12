@@ -17,6 +17,7 @@ public sealed partial class UserProjection
             Email = @event.Email,
             Username = @event.Username,
             DisplayName = @event.DisplayName,
+            PasswordHash = @event.PasswordHash,
             CreatedAtUtc = @event.OccurredOnUtc
         };
     }

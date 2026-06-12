@@ -4,7 +4,7 @@ namespace Platform.Common.Entities;
 
 public abstract class AggregateRoot<TId> : Entity<TId>
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private List<IDomainEvent>? _domainEvents;
 
     protected AggregateRoot()
     {
@@ -15,16 +15,16 @@ public abstract class AggregateRoot<TId> : Entity<TId>
     {
     }
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents
-        => _domainEvents.AsReadOnly();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     protected void Raise(IDomainEvent domainEvent)
     {
+        _domainEvents ??= [];
         _domainEvents.Add(domainEvent);
     }
 
     public void ClearDomainEvents()
     {
-        _domainEvents.Clear();
+        _domainEvents?.Clear();
     }
 }
