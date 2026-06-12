@@ -12,11 +12,11 @@
 
   <ItemGroup>
     <PackageReference Include="Marten" Version="9.7.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
     <PackageReference Include="Serilog" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Platform\Platform.Auth\Platform.Auth.csproj" />
     <ProjectReference Include="..\..\..\Platform\Platform.Common\Platform.Common.csproj" />
     <ProjectReference Include="..\..\..\Platform\Platform.Contracts\Platform.Contracts.csproj" />
     <ProjectReference Include="..\Identity.Contracts\Identity.Contracts.csproj" />

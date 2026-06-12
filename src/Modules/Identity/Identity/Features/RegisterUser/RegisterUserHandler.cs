@@ -1,8 +1,8 @@
 using Identity.Domain;
 using Identity.ReadModels;
 using Marten;
+using Platform.Auth;
 using Platform.Common.Results;
-using Platform.Contracts;
 using Platform.Contracts.Commands;
 
 namespace Identity.Features.RegisterUser;

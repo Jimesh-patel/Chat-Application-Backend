@@ -1,5 +1,5 @@
+using Platform.Auth;
 using Platform.Common.Results;
-using Platform.Contracts;
 
 namespace Identity.Domain;
 

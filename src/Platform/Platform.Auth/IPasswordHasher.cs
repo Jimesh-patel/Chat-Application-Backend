@@ -1,4 +1,4 @@
-namespace Platform.Contracts;
+namespace Platform.Auth;
 
 public interface IPasswordHasher
 {
