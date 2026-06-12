@@ -11,7 +11,8 @@ internal static class LoginUserEndpoint
     {
         app.MapPost("/api/identity/login", async (
             LoginUserCommand command, 
-            ICommandHandler<LoginUserCommand, LoginUserResponse> handler, 
+            ICommandHandler<LoginUserCommand, LoginUserResult> handler, 
+            HttpContext httpContext,
             CancellationToken cancellationToken) =>
         {
             var result = await handler.Handle(command, cancellationToken);
@@ -21,7 +22,17 @@ internal static class LoginUserEndpoint
                 return Results.BadRequest(result.Error);
             }
 
-            return Results.Ok(result.Value);
+            var loginResult = result.Value!;
+
+            httpContext.Response.Cookies.Append("refreshToken", loginResult.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true, // Ensure HTTPS is used
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7) // Should match JwtOptions ideally, but fine for now
+            });
+
+            return Results.Ok(new LoginUserResponse(loginResult.AccessToken));
         })
         .WithTags("Identity")
         .AllowAnonymous();

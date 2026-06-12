@@ -4,8 +4,11 @@ namespace Identity.Features.LoginUser;
 
 public sealed record LoginUserCommand(
     string Email,
-    string Password) : ICommand<LoginUserResponse>;
+    string Password) : ICommand<LoginUserResult>;
 
-public sealed record LoginUserResponse(
+public sealed record LoginUserResult(
     string AccessToken,
     string RefreshToken);
+
+public sealed record LoginUserResponse(
+    string AccessToken);

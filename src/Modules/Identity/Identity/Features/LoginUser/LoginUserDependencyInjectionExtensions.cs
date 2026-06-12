@@ -7,7 +7,7 @@ internal static class LoginUserDependencyInjectionExtensions
 {
     public static IServiceCollection AddLoginUser(this IServiceCollection services)
     {
-        services.AddScoped<ICommandHandler<LoginUserCommand, LoginUserResponse>, LoginUserHandler>();
+        services.AddScoped<ICommandHandler<LoginUserCommand, LoginUserResult>, LoginUserHandler>();
         return services;
     }
 }

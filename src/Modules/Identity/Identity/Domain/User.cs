@@ -15,7 +15,7 @@ public sealed class User : AggregateRoot<UserId>
 
     public DateTime CreatedAtUtc { get; private set; }
 
-    private List<RefreshToken> _refreshTokens = new();
+    private List<RefreshToken> _refreshTokens = [];
 
     public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
 
@@ -76,6 +76,7 @@ public sealed class User : AggregateRoot<UserId>
 
     public void Apply(UserLoggedIn e)
     {
+        _refreshTokens ??= [];
         _refreshTokens.Add(new RefreshToken(e.RefreshTokenHash, e.RefreshTokenExpiryUtc));
     }
 

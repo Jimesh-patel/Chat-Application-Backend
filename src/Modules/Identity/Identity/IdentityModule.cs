@@ -1,4 +1,5 @@
 using Identity.Features.LoginUser;
+using Identity.Features.LogoutUser;
 using Identity.Features.RefreshToken;
 using Identity.Features.RegisterUser;
 using Identity.Infractusture;
@@ -18,6 +19,7 @@ public sealed class IdentityModule : IModule
     {
         services.AddRegisterUser();
         services.AddLoginUser();
+        services.AddLogoutUser();
         services.AddRefreshToken();
         services.AddIdentityInfractrusture();
         services.AddUserProjection();
@@ -29,6 +31,7 @@ public sealed class IdentityModule : IModule
     {
         endpoints.MapRegisterUser();
         endpoints.MapLoginUser();
+        endpoints.MapLogoutUser();
         endpoints.MapRefreshToken();
 
         return endpoints;

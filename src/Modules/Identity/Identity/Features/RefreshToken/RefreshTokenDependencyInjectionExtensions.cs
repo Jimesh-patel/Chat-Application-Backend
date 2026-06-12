@@ -8,7 +8,7 @@ internal static class RefreshTokenDependencyInjectionExtensions
 {
     public static IServiceCollection AddRefreshToken(this IServiceCollection services)
     {
-        services.AddScoped<ICommandHandler<RefreshTokenCommand, LoginUserResponse>, RefreshTokenHandler>();
+        services.AddScoped<ICommandHandler<RefreshTokenCommand, LoginUserResult>, RefreshTokenHandler>();
         return services;
     }
 }

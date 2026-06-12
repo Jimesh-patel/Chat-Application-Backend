@@ -11,8 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, loggerConfig) => 
     loggerConfig.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddCustomSwagger();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -34,6 +33,6 @@ app.UseSwaggerUI();
 
 app.MapModules();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/health", () => "Healthy!");
 
 app.Run();

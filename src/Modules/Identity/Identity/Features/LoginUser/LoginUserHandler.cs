@@ -15,9 +15,9 @@ internal sealed class LoginUserHandler(
     IPasswordHasher passwordHasher,
     IJwtTokenGenerator jwtTokenGenerator,
     IOptions<JwtOptions> jwtOptions)
-    : ICommandHandler<LoginUserCommand, LoginUserResponse>
+    : ICommandHandler<LoginUserCommand, LoginUserResult>
 {
-    public async Task<Result<LoginUserResponse>> Handle(
+    public async Task<Result<LoginUserResult>> Handle(
         LoginUserCommand command,
         CancellationToken cancellationToken)
     {
@@ -29,12 +29,12 @@ internal sealed class LoginUserHandler(
 
         if (userReadModel is null)
         {
-            return Result<LoginUserResponse>.Failure(new Error("Identity.InvalidCredentials", "Invalid email or password."));
+            return Result<LoginUserResult>.Failure(new Error("Identity.InvalidCredentials", "Invalid email or password."));
         }
 
         if (!passwordHasher.Verify(command.Password, userReadModel.PasswordHash))
         {
-            return Result<LoginUserResponse>.Failure(new Error("Identity.InvalidCredentials", "Invalid email or password."));
+            return Result<LoginUserResult>.Failure(new Error("Identity.InvalidCredentials", "Invalid email or password."));
         }
 
         var accessToken = jwtTokenGenerator.GenerateToken(userReadModel.Id, userReadModel.Email, userReadModel.Username);
@@ -45,13 +45,13 @@ internal sealed class LoginUserHandler(
         var userAggregate = await session.Events.AggregateStreamAsync<User>(userReadModel.Id, token: cancellationToken);
         if (userAggregate is null)
         {
-            return Result<LoginUserResponse>.Failure(new Error("Identity.UserNotFound", "User aggregate not found."));
+            return Result<LoginUserResult>.Failure(new Error("Identity.UserNotFound", "User aggregate not found."));
         }
 
         userAggregate.Login(refreshTokenHash, refreshTokenExpiry);
         session.Events.Append(userAggregate.Id.Value, userAggregate.DomainEvents.ToArray());
         await session.SaveChangesAsync(cancellationToken);
 
-        return Result<LoginUserResponse>.Success(new LoginUserResponse(accessToken, refreshToken));
+        return Result<LoginUserResult>.Success(new LoginUserResult(accessToken, refreshToken));
     }
 }
