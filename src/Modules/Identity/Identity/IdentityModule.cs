@@ -1,4 +1,6 @@
-﻿using Identity.Features.RegisterUser;
+using Identity.Features.LoginUser;
+using Identity.Features.RefreshToken;
+using Identity.Features.RegisterUser;
 using Identity.Infractusture;
 using Identity.Projections;
 using Microsoft.AspNetCore.Routing;
@@ -15,6 +17,8 @@ public sealed class IdentityModule : IModule
     IConfiguration configuration)
     {
         services.AddRegisterUser();
+        services.AddLoginUser();
+        services.AddRefreshToken();
         services.AddIdentityInfractrusture();
         services.AddUserProjection();
         return services;
@@ -24,6 +28,8 @@ public sealed class IdentityModule : IModule
         IEndpointRouteBuilder endpoints)
     {
         endpoints.MapRegisterUser();
+        endpoints.MapLoginUser();
+        endpoints.MapRefreshToken();
 
         return endpoints;
     }

@@ -9,6 +9,8 @@ public sealed record PasswordHash
 
     private PasswordHash(string value) => Value = value;
 
+    public static PasswordHash FromHash(string hash) => new PasswordHash(hash);
+
     public static Result<PasswordHash> Create(string password, IPasswordHasher passwordHasher)
     {
         if (string.IsNullOrWhiteSpace(password))

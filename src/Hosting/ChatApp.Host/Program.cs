@@ -18,7 +18,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddAuth();
+builder.Services.AddAuth(builder.Configuration);
 
 builder.Services.AddModules(
     builder.Configuration,
