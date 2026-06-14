@@ -8,14 +8,9 @@ using Platform.Contracts;
 
 namespace Platform.Auth;
 
-public class JwtTokenGenerator : IJwtTokenGenerator
+public class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenGenerator
 {
-    private readonly JwtOptions _options;
-
-    public JwtTokenGenerator(IOptions<JwtOptions> options)
-    {
-        _options = options.Value;
-    }
+    private readonly JwtOptions _options = options.Value;
 
     public string GenerateToken(Guid userId, string email, string username)
     {

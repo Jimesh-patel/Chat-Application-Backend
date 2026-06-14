@@ -1,10 +1,10 @@
 
 using Identity;
-using Platform.Contracts.Modules;
-using Platform.Persistence.DependencyInjection;
-using Platform.Http;
-using Serilog;
 using Platform.Auth.DependencyInjection;
+using Platform.Contracts.Modules;
+using Platform.Http;
+using Platform.Persistence.DependencyInjection;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +14,7 @@ builder.Host.UseSerilog((context, loggerConfig) =>
 builder.Services.AddCustomSwagger();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddCorsConfiguration();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddPersistence(builder.Configuration);
@@ -24,6 +25,8 @@ builder.Services.AddModules(
     typeof(IdentityModule).Assembly);
 
 var app = builder.Build();
+
+app.UseCors(CorsDependencyInjectionExtensions.PolicyName);
 
 app.UseExceptionHandler();
 app.UseSerilogRequestLogging();
