@@ -1,3 +1,4 @@
+using Identity.Features.FindAllUsers;
 using Identity.Features.LoginUser;
 using Identity.Features.LogoutUser;
 using Identity.Features.RefreshToken;
@@ -21,6 +22,7 @@ public sealed class IdentityModule : IModule
         services.AddLoginUser();
         services.AddLogoutUser();
         services.AddRefreshToken();
+        services.AddFindAllUsers();
         services.AddIdentityInfractrusture();
         services.AddUserProjection();
         return services;
@@ -33,6 +35,7 @@ public sealed class IdentityModule : IModule
         endpoints.MapLoginUser();
         endpoints.MapLogoutUser();
         endpoints.MapRefreshToken();
+        endpoints.MapFindAllUsers();
 
         return endpoints;
     }
