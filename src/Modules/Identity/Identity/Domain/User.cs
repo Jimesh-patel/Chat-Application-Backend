@@ -68,8 +68,8 @@ public sealed class User : AggregateRoot<UserId>
     public void Apply(UserRegistered e)
     {
         Id = e.UserId;
-        Email = Email.Create(e.Email).Value;
-        Username = Username.Create(e.Username).Value;
+        Email = Email.Create(e.Email).Value!;
+        Username = Username.Create(e.Username).Value!;
         PasswordHash = PasswordHash.FromHash(e.PasswordHash);
         CreatedAtUtc = e.OccurredOnUtc;
     }

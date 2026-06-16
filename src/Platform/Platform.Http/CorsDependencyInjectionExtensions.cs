@@ -14,9 +14,10 @@ public static class CorsDependencyInjectionExtensions
             options.AddPolicy(CorsPolicyName, policy =>
             {
                 policy
-                    .WithOrigins("*")
+                    .WithOrigins("http://localhost:5173")
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
         });
 
