@@ -2,12 +2,10 @@ using Chat.ReadModels;
 using Marten;
 using Platform.Common.Results;
 using Platform.Contracts.Queries;
+using Serilog;
 
 namespace Chat.Features.GetMessages;
 
-/// <summary>
-/// Handles <see cref="GetMessagesQuery"/> by querying the standalone MessageReadModel documents from Marten.
-/// </summary>
 internal sealed class GetMessagesHandler(IQuerySession querySession)
     : IQueryHandler<GetMessagesQuery, IReadOnlyList<MessageDto>>
 {
@@ -26,7 +24,9 @@ internal sealed class GetMessagesHandler(IQuerySession querySession)
             m.ConversationId,
             m.SenderId,
             m.Content,
-            m.SentAtUtc)).ToList();
+            m.Status,
+            m.SentAtUtc,
+            m.SeenAtUtc)).ToList();
 
         return Result<IReadOnlyList<MessageDto>>.Success(dtos);
     }

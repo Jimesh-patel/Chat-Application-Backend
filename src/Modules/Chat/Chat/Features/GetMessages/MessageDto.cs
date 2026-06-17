@@ -1,3 +1,5 @@
+using Chat.Domain;
+
 namespace Chat.Features.GetMessages;
 
 public sealed record MessageDto(
@@ -5,4 +7,6 @@ public sealed record MessageDto(
     Guid ConversationId,
     Guid SenderId,
     string Content,
-    DateTime SentAtUtc);
+    MessageStatus Status,
+    DateTime SentAtUtc,
+    DateTime? SeenAtUtc);

@@ -51,6 +51,6 @@ internal sealed class RefreshTokenHandler(
         session.Events.Append(userId, [.. userAggregate.DomainEvents]);
         await session.SaveChangesAsync(cancellationToken);
 
-        return Result<LoginUserResult>.Success(new LoginUserResult(newAccessToken, newRefreshToken));
+        return Result<LoginUserResult>.Success(new LoginUserResult(newAccessToken, newRefreshToken, userId, username, email));
     }
 }

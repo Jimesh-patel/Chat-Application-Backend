@@ -8,7 +8,13 @@ public sealed record LoginUserCommand(
 
 public sealed record LoginUserResult(
     string AccessToken,
-    string RefreshToken);
+    string RefreshToken,
+    Guid UserId,
+    string Username,
+    string Email);
 
 public sealed record LoginUserResponse(
-    string AccessToken);
+    string AccessToken,
+    Guid UserId,
+    string Username,
+    string Email);

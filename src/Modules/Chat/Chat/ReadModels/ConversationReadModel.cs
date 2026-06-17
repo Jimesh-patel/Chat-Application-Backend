@@ -9,6 +9,4 @@ public sealed class ConversationReadModel
     public Guid ParticipantB { get; set; }
     public DateTime CreatedAtUtc { get; set; }
     public DateTime LastMessageAtUtc { get; set; }
-    public int MessageCount { get; set; }
-    public List<MessageReadModel> Messages { get; set; } = [];
 }

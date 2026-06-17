@@ -19,9 +19,7 @@ public sealed partial class ConversationProjection
             ParticipantA = @event.ParticipantA,
             ParticipantB = @event.ParticipantB,
             CreatedAtUtc = @event.StartedAtUtc,
-            LastMessageAtUtc = @event.StartedAtUtc,
-            MessageCount = 0,
-            Messages = []
+            LastMessageAtUtc = @event.StartedAtUtc
         };
 
     public static ConversationReadModel Apply(
@@ -29,16 +27,6 @@ public sealed partial class ConversationProjection
         ConversationReadModel model)
     {
         model.LastMessageAtUtc = @event.SentAtUtc;
-        model.MessageCount++;
-        model.Messages.Add(new MessageReadModel
-        {
-            Id = @event.MessageId.Value,
-            ConversationId = @event.ConversationId.Value,
-            SenderId = @event.SenderId,
-            RecipientId = @event.RecipientId,
-            Content = @event.Content,
-            SentAtUtc = @event.SentAtUtc
-        });
         return model;
     }
 }

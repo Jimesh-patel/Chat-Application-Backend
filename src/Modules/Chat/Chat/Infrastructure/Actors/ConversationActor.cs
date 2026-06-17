@@ -1,10 +1,12 @@
 using Akka.Actor;
 using Chat.Domain;
 using Chat.Features.CreateConversation;
+using Chat.Features.MarkSeen;
 using Chat.Features.SendMessage;
 using Marten;
 using Platform.Akka.Actors;
 using Platform.Common.Results;
+using Serilog;
 
 namespace Chat.Infrastructure.Actors;
 
@@ -27,6 +29,9 @@ public sealed class ConversationActor : ChatActorBase
 
         ReceiveAsync<SendMessageActorCommand>(
             HandleSendMessage);
+
+        ReceiveAsync<MarkMessageSeenActorCommand>(
+            HandleMarkSeen);
     }
 
     protected override void OnPreStart()
@@ -147,6 +152,37 @@ public sealed class ConversationActor : ChatActorBase
                     new Error(
                         "Chat.PersistenceFailed",
                         "Failed to persist message.")));
+        }
+    }
+
+    private async Task HandleMarkSeen(
+        MarkMessageSeenActorCommand cmd)
+    {
+        try
+        {
+            if (_conversation is null)
+            {
+                Sender.Tell(Result<Guid>.Failure(new Error("Chat.ConversationNotFound", "Conversation not found.")));
+                return;
+            }
+
+            _conversation.MarkMessageSeen(cmd.MessageId);
+            Log.Information("[Mark Seen]: Mark msg seen - {id}", cmd.MessageId);
+
+            await using var session = _store.LightweightSession();
+            session.Events.Append(_conversationId.Value, _conversation.DomainEvents);
+            await session.SaveChangesAsync();
+
+            Sender.Tell(Result<Guid>.Success(cmd.MessageId.Value));
+        }
+        catch (InvalidOperationException ex)
+        {
+            Sender.Tell(Result<Guid>.Failure(new Error("Chat.InvalidStatusTransition", ex.Message)));
+        }
+        catch (Exception ex)
+        {
+            LogError(ex, "Failed marking message {MessageId} as seen", cmd.MessageId);
+            Sender.Tell(Result<Guid>.Failure(new Error("Chat.PersistenceFailed", "Failed to persist status.")));
         }
     }
 

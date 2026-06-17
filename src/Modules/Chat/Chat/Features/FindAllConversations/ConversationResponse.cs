@@ -9,5 +9,5 @@ public sealed record ConversationResponse(
     Guid ConversationId,
     DateTime CreatedAtUtc,
     DateTime LastMessageAtUtc,
-    int MessageCount,
+    int UnseenMessageCount,
     UserDto ParticipantB);

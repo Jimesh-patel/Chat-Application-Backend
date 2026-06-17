@@ -3,6 +3,7 @@ using Akka.Hosting;
 using Chat.Features.CreateConversation;
 using Chat.Features.FindAllConversations;
 using Chat.Features.GetMessages;
+using Chat.Features.MarkSeen;
 using Chat.Features.SendMessage;
 using Chat.Infrastructure.Actors;
 using Chat.Projections;
@@ -24,6 +25,8 @@ public sealed class ChatModule : IModule
         services.AddSendMessage();
         services.AddFindAllConversations();
         services.AddGetMessages();
+        services.AddMarkMessageSeen();
+        services.AddScoped<Platform.Realtime.Abstractions.IChatHubDispatcher, Chat.Infrastructure.Realtime.ChatHubDispatcher>();
         services.AddConversationProjection();
         services.AddActorSystem();
 
