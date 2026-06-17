@@ -8,9 +8,6 @@ using Platform.Contracts.Commands;
 
 namespace Chat.Features.SendMessage;
 
-/// <summary>
-/// Minimal API endpoint for sending a message within a conversation.
-/// </summary>
 internal static class SendMessageEndpoint
 {
     public static IEndpointRouteBuilder MapSendMessage(

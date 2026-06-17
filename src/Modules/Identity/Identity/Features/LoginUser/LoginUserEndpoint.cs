@@ -27,12 +27,12 @@ internal static class LoginUserEndpoint
             httpContext.Response.Cookies.Append("refreshToken", loginResult.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true, // Ensure HTTPS is used
+                Secure = true, 
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(7) // Should match JwtOptions ideally, but fine for now
+                Expires = DateTime.UtcNow.AddDays(7) 
             });
 
-            return Results.Ok(new LoginUserResponse(loginResult.AccessToken));
+            return Results.Ok(new LoginUserResponse(loginResult.AccessToken, loginResult.UserId, loginResult.Username, loginResult.Email));
         })
         .WithTags("Identity")
         .AllowAnonymous();

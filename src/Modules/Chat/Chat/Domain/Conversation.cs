@@ -6,14 +6,15 @@ namespace Chat.Domain;
 
 public sealed class Conversation : AggregateRoot<ConversationId>
 {
+    private readonly Dictionary<MessageId, MessageStatus> _messageStatuses = [];
+
     public Conversation() { }
 
     public Guid ParticipantA { get; private set; }
     public Guid ParticipantB { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
-    public DateTime LastMessageAtUtc { get; private set; }
-    public int MessageCount { get; private set; }
-
+    public bool UserATyping { get; private set; }
+    public bool UserBTyping { get; private set; }
 
     public static Conversation Start(
         ConversationId id,
@@ -27,6 +28,8 @@ public sealed class Conversation : AggregateRoot<ConversationId>
             ParticipantB = participantB,
             CreatedAtUtc = DateTime.UtcNow
         };
+        
+
 
         conversation.Raise(new ConversationStarted(
             id,
@@ -37,6 +40,14 @@ public sealed class Conversation : AggregateRoot<ConversationId>
         return conversation;
     }
 
+    public void SetUserTyping(Guid userId, bool isTyping)
+    {
+        if (userId == ParticipantA)
+            UserATyping = isTyping;
+        else if (userId == ParticipantB)
+            UserBTyping = isTyping;
+    }
+
     public void SendMessage(
         MessageId messageId,
         Guid senderId,
@@ -45,6 +56,8 @@ public sealed class Conversation : AggregateRoot<ConversationId>
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(content);
 
+        _messageStatuses[messageId] = MessageStatus.Sent;
+
         Raise(new MessageSent(
             Id,
             messageId,
@@ -52,6 +65,21 @@ public sealed class Conversation : AggregateRoot<ConversationId>
             recipientId,
             content,
             DateTime.UtcNow));
+    }
+
+    public void MarkMessageSeen(MessageId messageId)
+    {
+        if (!_messageStatuses.TryGetValue(messageId, out var status))
+        {
+            throw new InvalidOperationException("Message not found.");
+        }
+
+        if (status != MessageStatus.Sent)
+        {
+            throw new InvalidOperationException($"Cannot transition status to Seen from {status}.");
+        }
+
+        Raise(new MessageSeen(messageId, DateTime.UtcNow));
     }
 
     public void Apply(ConversationStarted e)
@@ -64,7 +92,11 @@ public sealed class Conversation : AggregateRoot<ConversationId>
 
     public void Apply(MessageSent e)
     {
-        LastMessageAtUtc = e.SentAtUtc;
-        MessageCount++;
+        _messageStatuses[e.MessageId] = MessageStatus.Sent;
+    }
+
+    public void Apply(MessageSeen e)
+    {
+        _messageStatuses[e.MessageId] = MessageStatus.Seen;
     }
 }

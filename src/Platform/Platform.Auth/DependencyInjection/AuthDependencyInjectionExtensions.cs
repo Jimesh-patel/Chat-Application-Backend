@@ -3,9 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Platform.Contracts;
-using Serilog;
 using System.Text;
-using System.Text.Json;
 
 namespace Platform.Auth.DependencyInjection;
 

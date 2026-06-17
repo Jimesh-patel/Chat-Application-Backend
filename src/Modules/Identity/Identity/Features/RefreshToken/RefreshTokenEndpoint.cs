@@ -46,7 +46,8 @@ internal static class RefreshTokenEndpoint
                 Expires = DateTime.UtcNow.AddDays(7)
             });
 
-            return Results.Ok(new LoginUserResponse(loginResult.AccessToken));
+            return Results.Ok(new LoginUserResponse(loginResult.AccessToken, loginResult.UserId, loginResult.Username, loginResult.Email
+                ));
         })
         .WithTags("Identity")
         .RequireAuthorization();

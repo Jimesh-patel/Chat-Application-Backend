@@ -53,6 +53,6 @@ internal sealed class LoginUserHandler(
         session.Events.Append(userReadModel.Id.Value, userAggregate.DomainEvents.ToArray());
         await session.SaveChangesAsync(cancellationToken);
 
-        return Result<LoginUserResult>.Success(new LoginUserResult(accessToken, refreshToken));
+        return Result<LoginUserResult>.Success(new LoginUserResult(accessToken, refreshToken, userReadModel.Id, userReadModel.Username, userReadModel.Email));
     }
 }

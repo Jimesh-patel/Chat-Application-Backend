@@ -10,9 +10,7 @@ using Serilog;
 
 namespace Chat.Features.SendMessage;
 
-/// <summary>
-/// Handles <see cref="SendMessageCommand"/> by routing through the actor system.
-/// </summary>
+
 internal sealed class SendMessageHandler(
     IActorRegistry actorRegistry,
     IRealtimeNotifier realtimeNotifier)
@@ -47,7 +45,7 @@ internal sealed class SendMessageHandler(
 
             if (result.IsFailure)
             {
-                return Result<MessageDto>.Failure(result.Error);
+                return Result<MessageDto>.Failure(result.Error!);
             }
 
             var messageDto = new MessageDto(
@@ -55,9 +53,12 @@ internal sealed class SendMessageHandler(
                 command.ConversationId,
                 command.SenderId,
                 command.Content,
-                DateTime.UtcNow);
+                MessageStatus.Sent,
+                DateTime.UtcNow,
+                null);
 
             // Receiver realtime update
+            Log.Information("MessageReceived: {context}", command.Content);
             await realtimeNotifier.SendToUserAsync(
                 command.RecipientId,
                 "MessageReceived",
