@@ -13,6 +13,8 @@ public sealed class Conversation : AggregateRoot<ConversationId>
     public Guid ParticipantA { get; private set; }
     public Guid ParticipantB { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
+    public bool UserATyping { get; private set; }
+    public bool UserBTyping { get; private set; }
 
     public static Conversation Start(
         ConversationId id,
@@ -36,6 +38,14 @@ public sealed class Conversation : AggregateRoot<ConversationId>
             conversation.CreatedAtUtc));
 
         return conversation;
+    }
+
+    public void SetUserTyping(Guid userId, bool isTyping)
+    {
+        if (userId == ParticipantA)
+            UserATyping = isTyping;
+        else if (userId == ParticipantB)
+            UserBTyping = isTyping;
     }
 
     public void SendMessage(

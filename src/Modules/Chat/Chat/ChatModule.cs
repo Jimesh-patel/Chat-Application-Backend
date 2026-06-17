@@ -5,6 +5,7 @@ using Chat.Features.FindAllConversations;
 using Chat.Features.GetMessages;
 using Chat.Features.MarkSeen;
 using Chat.Features.SendMessage;
+using Chat.Features.UserTyping;
 using Chat.Infrastructure.Actors;
 using Chat.Projections;
 using Microsoft.AspNetCore.Routing;
@@ -26,6 +27,7 @@ public sealed class ChatModule : IModule
         services.AddFindAllConversations();
         services.AddGetMessages();
         services.AddMarkMessageSeen();
+        services.AddSetUserTyping();
         services.AddScoped<Platform.Realtime.Abstractions.IChatHubDispatcher, Chat.Infrastructure.Realtime.ChatHubDispatcher>();
         services.AddConversationProjection();
         services.AddActorSystem();

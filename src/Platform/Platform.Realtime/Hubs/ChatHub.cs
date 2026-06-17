@@ -11,6 +11,7 @@ namespace Platform.Realtime.Hubs;
 public sealed class ChatHub(IChatHubDispatcher dispatcher) : Hub
 {
     public sealed record SendMessageHubRequest(Guid ConversationId, Guid RecipientId, string Content);
+    public sealed record TypingHubRequest(Guid ConversationId, Guid UserId);
 
     public async Task<object?> SendMessage(SendMessageHubRequest request)
     {
@@ -32,6 +33,30 @@ public sealed class ChatHub(IChatHubDispatcher dispatcher) : Hub
     {
         Log.Information("[SignalR]: Mark Message Seen - {id}", messageId);
         await dispatcher.MarkMessageSeenAsync(conversationId, messageId);
+    }
+
+    public async Task UserTyping(TypingHubRequest request)
+    {
+        Log.Information("[SignalR]: User Typing - Conv:{ConvId} User:{UserId}", request.ConversationId, request.UserId);
+        
+        var userIdStr = Context.UserIdentifier;
+        if (!Guid.TryParse(userIdStr, out var userId))
+            throw new HubException("Unauthorized");
+
+        // Use request.UserId if provided, otherwise fallback to the authenticated userId. 
+        // We'll trust the auth context userId to prevent spoofing, but the requirement says frontend sends it.
+        await dispatcher.SetUserTypingAsync(request.ConversationId, userId, true);
+    }
+
+    public async Task StopTyping(TypingHubRequest request)
+    {
+        Log.Information("[SignalR]: Stop Typing - Conv:{ConvId} User:{UserId}", request.ConversationId, request.UserId);
+
+        var userIdStr = Context.UserIdentifier;
+        if (!Guid.TryParse(userIdStr, out var userId))
+            throw new HubException("Unauthorized");
+
+        await dispatcher.SetUserTypingAsync(request.ConversationId, userId, false);
     }
 
     public override async Task OnConnectedAsync()

@@ -3,6 +3,7 @@ using Chat.Domain;
 using Chat.Features.CreateConversation;
 using Chat.Features.MarkSeen;
 using Chat.Features.SendMessage;
+using Chat.Features.UserTyping;
 using Marten;
 using Platform.Akka.Actors;
 using Platform.Common.Results;
@@ -32,6 +33,9 @@ public sealed class ConversationActor : ChatActorBase
 
         ReceiveAsync<MarkMessageSeenActorCommand>(
             HandleMarkSeen);
+
+        Receive<SetUserTypingActorCommand>(
+            HandleSetUserTyping);
     }
 
     protected override void OnPreStart()
@@ -183,6 +187,28 @@ public sealed class ConversationActor : ChatActorBase
         {
             LogError(ex, "Failed marking message {MessageId} as seen", cmd.MessageId);
             Sender.Tell(Result<Guid>.Failure(new Error("Chat.PersistenceFailed", "Failed to persist status.")));
+        }
+    }
+
+    private void HandleSetUserTyping(SetUserTypingActorCommand cmd)
+    {
+        try
+        {
+            if (_conversation is null)
+            {
+                Sender.Tell(Result<Guid>.Failure(new Error("Chat.ConversationNotFound", "Conversation not found.")));
+                return;
+            }
+
+            _conversation.SetUserTyping(cmd.UserId, cmd.IsTyping);
+            var oppositeId = _conversation.ParticipantA == cmd.UserId ? _conversation.ParticipantB : _conversation.ParticipantA;
+
+            Sender.Tell(Result<Guid>.Success(oppositeId));
+        }
+        catch (Exception ex)
+        {
+            LogError(ex, "Failed setting typing status for user {UserId}", cmd.UserId);
+            Sender.Tell(Result<Guid>.Failure(new Error("Chat.SetTypingFailed", "Failed to set typing status.")));
         }
     }
 
