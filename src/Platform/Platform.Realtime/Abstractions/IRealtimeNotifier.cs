@@ -7,4 +7,10 @@ public interface IRealtimeNotifier
         string eventName,
         object payload,
         CancellationToken cancellationToken = default);
+
+    Task SendToConnectionsAsync(
+        IEnumerable<string> connectionIds,
+        string eventName,
+        object payload,
+        CancellationToken cancellationToken = default);
 }

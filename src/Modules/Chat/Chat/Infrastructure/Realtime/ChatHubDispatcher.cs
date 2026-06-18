@@ -10,7 +10,11 @@ namespace Chat.Infrastructure.Realtime;
 internal sealed class ChatHubDispatcher(
     ICommandHandler<SendMessageCommand, MessageDto> sendMessageHandler,
     ICommandHandler<MarkMessageSeenCommand, Guid> markSeenHandler,
-    ICommandHandler<SetUserTypingCommand, Guid> setUserTypingHandler)
+    ICommandHandler<SetUserTypingCommand, Guid> setUserTypingHandler,
+    ICommandHandler<Presence.Contracts.Commands.UserConnectedCommand, Guid> userConnectedHandler,
+    ICommandHandler<Presence.Contracts.Commands.UserDisconnectedCommand, Guid> userDisconnectedHandler,
+    ICommandHandler<Presence.Contracts.Commands.SubscribeToPresenceCommand, Guid> subscribeToPresenceHandler,
+    ICommandHandler<Presence.Contracts.Commands.UnsubscribeFromPresenceCommand, Guid> unsubscribeFromPresenceHandler)
     : IChatHubDispatcher
 {
     public async Task<object> SendMessageAsync(Guid senderId, Guid conversationId, Guid recipientId, string content, CancellationToken cancellationToken = default)
@@ -41,6 +45,34 @@ internal sealed class ChatHubDispatcher(
     {
         await setUserTypingHandler.Handle(
             new SetUserTypingCommand(conversationId, userId, isTyping),
+            cancellationToken);
+    }
+
+    public async Task UserConnectedAsync(Guid userId, string connectionId, CancellationToken cancellationToken = default)
+    {
+        await userConnectedHandler.Handle(
+            new Presence.Contracts.Commands.UserConnectedCommand(userId, connectionId),
+            cancellationToken);
+    }
+
+    public async Task UserDisconnectedAsync(Guid userId, string connectionId, CancellationToken cancellationToken = default)
+    {
+        await userDisconnectedHandler.Handle(
+            new Presence.Contracts.Commands.UserDisconnectedCommand(userId, connectionId),
+            cancellationToken);
+    }
+
+    public async Task SubscribeToPresenceAsync(Guid watcherUserId, string connectionId, Guid targetUserId, CancellationToken cancellationToken = default)
+    {
+        await subscribeToPresenceHandler.Handle(
+            new Presence.Contracts.Commands.SubscribeToPresenceCommand(watcherUserId, connectionId, targetUserId),
+            cancellationToken);
+    }
+
+    public async Task UnsubscribeFromPresenceAsync(string connectionId, Guid targetUserId, CancellationToken cancellationToken = default)
+    {
+        await unsubscribeFromPresenceHandler.Handle(
+            new Presence.Contracts.Commands.UnsubscribeFromPresenceCommand(connectionId, targetUserId),
             cancellationToken);
     }
 }

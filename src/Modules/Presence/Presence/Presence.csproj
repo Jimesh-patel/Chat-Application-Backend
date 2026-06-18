@@ -1,9 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Marten" Version="9.7.2" />
+    <PackageReference Include="Serilog" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Platform\Platform.Akka\Platform.Akka.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Platform.Common\Platform.Common.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Platform.Contracts\Platform.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Platform.Realtime\Platform.Realtime.csproj" />
+    <ProjectReference Include="..\Presence.Contracts\Presence.Contracts.csproj" />
+  </ItemGroup>
 
 </Project>

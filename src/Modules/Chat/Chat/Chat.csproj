@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\..\Platform\Platform.Realtime\Platform.Realtime.csproj" />
     <ProjectReference Include="..\Chat.Contracts\Chat.Contracts.csproj" />
     <ProjectReference Include="..\..\Identity\Identity.Contracts\Identity.Contracts.csproj" />
+    <ProjectReference Include="..\..\Presence\Presence.Contracts\Presence.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

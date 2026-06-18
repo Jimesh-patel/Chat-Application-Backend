@@ -17,4 +17,16 @@ public sealed class SignalRRealtimeNotifier(IHubContext<ChatHub> hubContext) : I
             payload,
             cancellationToken);
     }
+
+    public Task SendToConnectionsAsync(
+        IEnumerable<string> connectionIds,
+        string eventName,
+        object payload,
+        CancellationToken cancellationToken = default)
+    {
+        return hubContext.Clients.Clients(connectionIds).SendAsync(
+            eventName,
+            payload,
+            cancellationToken);
+    }
 }

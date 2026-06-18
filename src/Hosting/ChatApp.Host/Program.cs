@@ -1,5 +1,6 @@
 using Chat;
 using Identity;
+using Presence;
 using Platform.Akka;
 using Platform.Auth.DependencyInjection;
 using Platform.Contracts.Modules;
@@ -36,7 +37,8 @@ builder.Services.AddPlatformSignalR();
 builder.Services.AddModules(
     builder.Configuration,
     typeof(IdentityModule).Assembly,
-    typeof(ChatModule).Assembly);
+    typeof(ChatModule).Assembly,
+    typeof(PresenceModule).Assembly);
 
 var app = builder.Build();
 
